@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WanTok E-STOA - E-Marketing Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>E-STOA</h1>
+        <input type="text" id="searchBar" placeholder="Search for products...">
+        <button id="loginBtn">Login</button>
+        <button id="registerBtn">Register</button>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#" onclick="showCategory('all')">Home</a></li>
+            <li><a href="#" onclick="showCategory('handicrafts')">Handicrafts</a></li>
+            <li><a href="#" onclick="showCategory('food')">Local Foods</a></li>
+            <li><a href="#" onclick="showCategory('fashion')">Traditional Fashion</a></li>
+            <li><a href="#" onclick="showCategory('contact')">Contact</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <div class="products" id="products"></div>
+        <div class="cart">
+            <h2>Shopping Cart</h2>
+            <ul id="cartItems"></ul>
+            <button id="checkoutBtn">Checkout</button>
+            <p id="orderMessage"></p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const products = [
+                { id: 1, name: "Handmade Bilum", price: 150, category: "handicrafts", image: "bilum.jpg" },
+                { id: 2, name: "Carved Wooden Mask", price: 300, category: "handicrafts", image: "mask.jpg" },
+                { id: 3, name: "Local Coffee Beans", price: 50, category: "food", image: "coffee.webp" },
+                { id: 4, name: "Fresh produce Potatoe Net", price: 200, category: "food", image: "h.jpg" },
+                { id: 5, name: "Traditional Necklace", price: 80, category: "fashion", image: "N.jpg" },
+                { id: 6, name: "Grass Skirt", price: 100, category: "fashion", image: "y.jpg" }
+            ];
+
+            const productsContainer = document.getElementById("products");
+            const cartItems = document.getElementById("cartItems");
+            const checkoutBtn = document.getElementById("checkoutBtn");
+            const orderMessage = document.getElementById("orderMessage");
+            const searchBar = document.getElementById("searchBar");
+            let cart = [];
+            
+            function renderProducts(filter = "", category = "all") {
+                productsContainer.innerHTML = "";
+                products.filter(product =>
+                    (category === "all" || product.category === category) &&
+                    product.name.toLowerCase().includes(filter.toLowerCase())
+                ).forEach(product => {
+                    const productElement = document.createElement("div");
+                    productElement.classList.add("product");
+                    productElement.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                        <h3>${product.name}</h3>
+                        <p>PGK ${product.price}</p>
+                        <button onclick="addToCart(${product.id})">Add to Cart</button>
+                    `;
+                    productsContainer.appendChild(productElement);
+                });
+            }
+
+            window.addToCart = function(productId) {
+                const product = products.find(p => p.id === productId);
+                cart.push(product);
+                renderCart();
+            };
+
+            function renderCart() {
+                cartItems.innerHTML = "";
+                cart.forEach(item => {
+                    const li = document.createElement("li");
+                    li.textContent = `${item.name} - PGK ${item.price}`;
+                    cartItems.appendChild(li);
+                });
+            }
+
+            checkoutBtn.addEventListener("click", () => {
+                if (cart.length > 0) {
+                    orderMessage.textContent = "Order placed successfully!";
+                    cart = [];
+                    renderCart();
+                } else {
+                    orderMessage.textContent = "Your cart is empty!";
+                }
+            });
+
+            searchBar.addEventListener("input", (e) => {
+                renderProducts(e.target.value);
+            });
+
+            window.showCategory = function(category) {
+                renderProducts("", category);
+            };
+
+            renderProducts();
+        });
+    </script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('background.jpg') no-repeat center center/cover;
+        }
+        header {
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: 15px;
+            background: #00b7ff;
+            padding: 10px;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 900px;
+        }
+        .product {
+            border: 1px solid #ddd;
+            padding: 15px;
+            background: white;
+            text-align: center;
+        }
+        .product img {
+            max-width: 100%;
+            height: auto;
+        }
+        .cart {
+            border: 1px solid #ddd;
+            padding: 15px;
+            background: white;
+            min-width: 200px;
+        }
+    </style>
+</body>
+</html>
